@@ -39,7 +39,7 @@ def send_email():
 
 
 email_sent = False
-send_mail_date = datetime.datetime(2016, 1, 1, 16, 0)
+send_mail_date = datetime.datetime(2016, 1, 1, 19, 0)
 morning_date = datetime.datetime(2016, 1, 1, 6, 0)
 ser = serial.Serial('/dev/ttyUSB0', 115200)  # open serial port
 voltage = 0.0
@@ -47,7 +47,6 @@ current = 0.0
 power = 0.0
 
 while(True):
-    print("comecou")
     content = str(ser.readline())
 
     date = datetime.datetime.now()
@@ -55,13 +54,12 @@ while(True):
     voltage = float(content[0].split(":")[1])
     current = float(content[1].split(":")[1])
     power = float(content[2].split(":")[1])
-
-    print(date)
+    bVoltage = float(content[3].split(":")[1])
 
     with open('solar_data.csv', mode='a') as solarData:
         date = datetime.datetime.now()
         writer = csv.writer(solarData, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        writer.writerow([date,voltage, current, power])
+        writer.writerow([date,voltage, current, power, bVoltage])
 
 
     if date.time().hour == send_mail_date.time().hour and email_sent is not True:
@@ -73,5 +71,4 @@ while(True):
         print("Email reset timer")
         email_sent = False
 
-
-
+    print(date,voltage, current, power, bVoltage)
